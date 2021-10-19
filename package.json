@@ -1,4 +1,30 @@
 {
+  "name": "injektion",
+  "description": "Decorator-less dependency injection for JavaScript and TypeScript",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andresilva-cc/injektion.git"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "ioc",
+    "inversion of control",
+    "di",
+    "dependency injection"
+  ],
+  "author": "André Silva (andreluiz.97@outlook.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andresilva-cc/injektion/issues"
+  },
+  "homepage": "https://github.com/andresilva-cc/injektion#readme",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
