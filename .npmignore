@@ -1,0 +1,7 @@
+coverage
+src
+.eslintignore
+.eslintrc.js
+jest.config.js
+tsconfig.build.json
+tsconfig.json
