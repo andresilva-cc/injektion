@@ -27,6 +27,9 @@
     "url": "https://github.com/andresilva-cc/injektion/issues"
   },
   "homepage": "https://github.com/andresilva-cc/injektion#readme",
+  "dependencies": {
+    "reflection-function": "^1.0.2"
+  },
   "devDependencies": {
     "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
