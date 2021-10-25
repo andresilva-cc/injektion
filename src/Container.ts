@@ -1,4 +1,5 @@
 import { ReflectionClass } from 'reflection-function';
+import Dependency from './Dependency';
 
 class Container {
   private dependencies: Record<string, Dependency> = {};
@@ -83,12 +84,6 @@ class Container {
   private isDependencyResolved(key: string): boolean {
     return this.dependencies[key].resolved;
   }
-}
-
-interface Dependency {
-  reference: any;
-  value?: any;
-  resolved: boolean;
 }
 
 export default Container;
