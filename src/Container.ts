@@ -35,6 +35,10 @@ class Container {
   public get<T>(key: string): T {
     const normalizedKey = Container.normalize(key);
 
+    if (!this.has(normalizedKey)) {
+      throw new Error(`Couldn't find dependency ${normalizedKey} in the container`);
+    }
+
     if (!this.isDependencyResolved(normalizedKey)) {
       this.resolve(normalizedKey);
     }
@@ -43,10 +47,6 @@ class Container {
   }
 
   private resolve(key: string): any {
-    if (!this.has(key)) {
-      throw new Error(`Couldn't find dependency ${key} in the container`);
-    }
-
     const { classConstructor } = new ReflectionClass(this.dependencies[key].reference);
 
     const resolvedDependencies = [];
