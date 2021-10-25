@@ -17,7 +17,7 @@ describe('Container', () => {
     expect(container.has('user_controller')).toBe(true);
   });
 
-  test('call', () => {
+  test('class method should return the correct data using nested dependencies', () => {
     const result = userController.all();
 
     expect(result.status).toBe(200);
