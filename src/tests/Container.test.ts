@@ -10,6 +10,13 @@ describe('Container', () => {
     expect(container.has('UserRepository')).toBe(true);
   });
 
+  it('should normalize the dependency name', () => {
+    expect(container.has('UserController')).toBe(true);
+    expect(container.has('userController')).toBe(true);
+    expect(container.has('usercontroller')).toBe(true);
+    expect(container.has('user_controller')).toBe(true);
+  });
+
   test('call', () => {
     const result = userController.all();
 
