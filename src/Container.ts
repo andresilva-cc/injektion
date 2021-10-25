@@ -8,7 +8,7 @@ class Container {
 
     const normalizedName = Container.normalize(name);
 
-    if (this.dependencyExists(normalizedName)) {
+    if (this.has(normalizedName)) {
       throw new Error(`Dependency ${normalizedName} is already registered.`);
     }
 
@@ -21,7 +21,7 @@ class Container {
   public bind(interfaceName: string, reference: any): void {
     const normalizedName = Container.normalize(interfaceName);
 
-    if (this.dependencyExists(normalizedName)) {
+    if (this.has(normalizedName)) {
       throw new Error(`Dependency ${normalizedName} is already registered.`);
     }
 
@@ -42,7 +42,7 @@ class Container {
   }
 
   private resolve(key: string): any {
-    if (!this.dependencyExists(key)) {
+    if (!this.has(key)) {
       throw new Error(`Couldn't find dependency ${key} in the container`);
     }
 
@@ -74,8 +74,10 @@ class Container {
     return string.toLowerCase().replace(/[_-]/g, '');
   }
 
-  private dependencyExists(key: string) {
-    return !!this.dependencies[key];
+  public has(key: string): boolean {
+    const normalizedKey = Container.normalize(key);
+
+    return !!this.dependencies[normalizedKey];
   }
 
   private isDependencyResolved(key: string) {
