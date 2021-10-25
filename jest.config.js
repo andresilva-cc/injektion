@@ -7,5 +7,6 @@ module.exports = {
   ],
   coveragePathIgnorePatterns: [
     'index.ts',
+    'src/tests',
   ],
 };
