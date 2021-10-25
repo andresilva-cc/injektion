@@ -1,4 +1,4 @@
-import UserRepository from './UserRepository';
+import UserRepository from './Contracts/UserRepository';
 
 class UserService {
   constructor(

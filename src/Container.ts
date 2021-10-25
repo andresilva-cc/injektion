@@ -18,6 +18,19 @@ class Container {
     };
   }
 
+  public bind(interfaceName: string, reference: any): void {
+    const normalizedName = Container.normalize(interfaceName);
+
+    if (this.dependencyExists(normalizedName)) {
+      throw new Error(`Dependency ${normalizedName} is already registered.`);
+    }
+
+    this.dependencies[normalizedName] = {
+      reference,
+      resolved: false,
+    };
+  }
+
   public get<T>(key: string): T {
     const normalizedKey = Container.normalize(key);
 

@@ -1,6 +1,8 @@
 /* eslint-disable class-methods-use-this */
 
-class UserRepository {
+import UserRepository from './Contracts/UserRepository';
+
+class MockUserRepository implements UserRepository {
   public all() {
     return [
       {
@@ -15,4 +17,4 @@ class UserRepository {
   }
 }
 
-export default UserRepository;
+export default MockUserRepository;

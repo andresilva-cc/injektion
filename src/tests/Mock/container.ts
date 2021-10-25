@@ -1,12 +1,12 @@
 import Container from '../../Container';
 import UserController from './UserController';
 import UserService from './UserService';
-import UserRepository from './UserRepository';
+import MockUserRepository from './MockUserRepository';
 
 const container = new Container();
 
 container.register(UserController);
 container.register(UserService);
-container.register(UserRepository);
+container.bind('UserRepository', MockUserRepository);
 
 export default container;
