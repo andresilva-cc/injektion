@@ -70,7 +70,7 @@ class Container {
     return this.dependencies[key].value;
   }
 
-  private static normalize(string: string) {
+  private static normalize(string: string): string {
     return string.toLowerCase().replace(/[_-]/g, '');
   }
 
@@ -80,7 +80,7 @@ class Container {
     return !!this.dependencies[normalizedKey];
   }
 
-  private isDependencyResolved(key: string) {
+  private isDependencyResolved(key: string): boolean {
     return this.dependencies[key].resolved;
   }
 }
