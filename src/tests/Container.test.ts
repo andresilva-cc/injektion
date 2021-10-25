@@ -1,5 +1,6 @@
 import container from './Mock/container';
 import UserController from './Mock/UserController';
+import MockUserRepository from './Mock/MockUserRepository';
 
 describe('Container', () => {
   const userController = <UserController>container.get('UserController');
@@ -23,5 +24,17 @@ describe('Container', () => {
     expect(result.status).toBe(200);
     expect(result.body.users.length).toBe(2);
     expect(result.body.users[0].name).toBe('Jon Snow');
+  });
+
+  it('should throw when trying to register the same concrete class', () => {
+    expect(() => container.register(UserController)).toThrow();
+  });
+
+  it('should throw when trying to bind the same interface name', () => {
+    expect(() => container.bind('UserRepository', MockUserRepository)).toThrow();
+  });
+
+  it('should throw when trying to get an inexistent dependency', () => {
+    expect(() => container.get('OrderRepository')).toThrow();
   });
 });
