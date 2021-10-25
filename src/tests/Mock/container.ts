@@ -5,8 +5,8 @@ import UserRepository from './UserRepository';
 
 const container = new Container();
 
-container.register('UserController', UserController);
-container.register('UserService', UserService);
-container.register('UserRepository', UserRepository);
+container.register(UserController);
+container.register(UserService);
+container.register(UserRepository);
 
 export default container;

@@ -3,14 +3,16 @@ import { ReflectionClass } from 'reflection-function';
 class Container {
   private dependencies: Record<string, Dependency> = {};
 
-  public register(key: string, reference: any): void {
-    const normalizedKey = Container.normalize(key);
+  public register(reference: any): void {
+    const { name } = new ReflectionClass(reference);
 
-    if (this.dependencyExists(normalizedKey)) {
-      throw new Error(`Dependency ${normalizedKey} is already registered.`);
+    const normalizedName = Container.normalize(name);
+
+    if (this.dependencyExists(normalizedName)) {
+      throw new Error(`Dependency ${normalizedName} is already registered.`);
     }
 
-    this.dependencies[normalizedKey] = {
+    this.dependencies[normalizedName] = {
       reference,
       resolved: false,
     };
