@@ -11,7 +11,7 @@ class MockUserRepository implements UserRepository {
       },
       {
         id: 1,
-        name: 'Daeneris Targaryen',
+        name: 'Daenerys Targaryen',
       },
     ];
   }
