@@ -3,7 +3,12 @@ import UserController from './Mock/UserController';
 import MockUserRepository from './Mock/MockUserRepository';
 
 describe('Container', () => {
-  const userController = <UserController>container.get('UserController');
+  let userController: UserController;
+
+  beforeAll(async () => {
+    await container.autoload();
+    userController = <UserController>container.get('UserController');
+  });
 
   it('should contain the registered dependencies', () => {
     expect(container.has('UserController')).toBe(true);
