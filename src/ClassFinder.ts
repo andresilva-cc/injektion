@@ -1,32 +1,42 @@
-import { readdir } from 'fs/promises';
+import { readdirSync } from 'fs';
+import { join, resolve } from 'path';
 
 class ClassFinder {
-  public static async find(): Promise<Array<any>> {
-    try {
-      const classes: Array<Function> = [];
+  public static async find(path: string): Promise<Array<Function>> {
+    const absolutePath = resolve(path);
 
-      const files = await readdir('./src/tests/Mock', {
-        withFileTypes: true,
-      });
+    const files = this.getFilesFromPath(absolutePath);
 
-      // eslint-disable-next-line no-restricted-syntax
-      for (const file of files) {
-        console.log(`${file.isDirectory() ? 'Diretory: ' : 'File: '} ${file.name}`);
+    const exports = await Promise.all(
+      files.map((file) => (
+        this.getClassesFromFile(file)
+      )),
+    );
 
-        if (file.isFile()) {
-          // eslint-disable-next-line no-await-in-loop
-          classes.push(...await this.importAndResolveClasses(`./tests/Mock/${file.name}`));
-        }
-      }
-
-      return classes;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+    return exports.flat();
   }
 
-  private static async importAndResolveClasses(path: string): Promise<Array<Function>> {
+  private static getFilesFromPath(path: string): Array<string> {
+    const files: Array<string> = [];
+
+    const entries = readdirSync(path, {
+      withFileTypes: true,
+    });
+
+    entries.forEach((entry) => {
+      if (entry.isFile()) {
+        files.push(join(path, entry.name));
+      }
+
+      if (entry.isDirectory()) {
+        files.push(...this.getFilesFromPath(join(path, entry.name)));
+      }
+    });
+
+    return files;
+  }
+
+  private static async getClassesFromFile(path: string): Promise<Array<Function>> {
     const classes: Array<Function> = [];
 
     const modules = await import(path);

@@ -1,12 +1,17 @@
 import { ReflectionClass } from 'reflection-function';
+import ContainerOptions from 'ContainerOptions';
 import ClassFinder from './ClassFinder';
 import Dependency from './Dependency';
 
 class Container {
   private dependencies: Record<string, Dependency> = {};
 
+  constructor(
+    private options: ContainerOptions,
+  ) {}
+
   public async autoload(): Promise<void> {
-    const dependencies = await ClassFinder.find();
+    const dependencies = await ClassFinder.find(this.options.autoloadBaseDir);
 
     dependencies.forEach((dependency) => {
       this.register(dependency);
@@ -15,7 +20,6 @@ class Container {
 
   public register(reference: any): void {
     const { name } = new ReflectionClass(reference);
-    console.log(`Registering dependency ${name}`);
 
     const normalizedName = Container.normalize(name);
 
