@@ -1,5 +1,8 @@
+/* eslint-disable new-cap */
+
 import { ReflectionClass } from 'reflection-function';
-import ContainerOptions from 'ContainerOptions';
+import ContainerOptions from './ContainerOptions';
+import DependencyType from './DependencyType';
 import ClassFinder from './ClassFinder';
 import Dependency from './Dependency';
 
@@ -18,29 +21,35 @@ class Container {
     });
   }
 
-  public register(reference: any): void {
+  public register(reference: Function): void {
     const { name } = new ReflectionClass(reference);
 
     const normalizedName = Container.normalize(name);
 
-    if (this.has(normalizedName)) {
-      throw new Error(`Dependency ${normalizedName} is already registered.`);
-    }
-
     this.dependencies[normalizedName] = {
-      reference,
+      type: DependencyType.Normal,
+      reference: reference as typeof Function,
       resolved: false,
     };
   }
 
-  public bind(interfaceName: string, reference: any): void {
-    const normalizedName = Container.normalize(interfaceName);
-
-    if (this.has(normalizedName)) {
-      throw new Error(`Dependency ${normalizedName} is already registered.`);
-    }
+  public bind(name: string, reference: Function): void {
+    const normalizedName = Container.normalize(name);
 
     this.dependencies[normalizedName] = {
+      type: DependencyType.Normal,
+      reference: reference as typeof Function,
+      resolved: false,
+    };
+  }
+
+  public singleton(reference: any): void {
+    const { name } = new ReflectionClass(reference);
+
+    const normalizedName = Container.normalize(name);
+
+    this.dependencies[normalizedName] = {
+      type: DependencyType.Singleton,
       reference,
       resolved: false,
     };
@@ -57,32 +66,44 @@ class Container {
       this.resolve(normalizedKey);
     }
 
-    return this.dependencies[normalizedKey].value;
+    if (this.dependencies[normalizedKey].type === DependencyType.Normal) {
+      return this.dependencies[normalizedKey].instructions?.call(this);
+    }
+
+    return this.dependencies[normalizedKey].instance;
   }
 
   private resolve(key: string): any {
     const { classConstructor } = new ReflectionClass(this.dependencies[key].reference);
 
-    const resolvedDependencies = [];
+    const resolvedDependencies: Array<any> = [];
 
-    // Resolve dependencies of this key
     for (let i = 0; i < classConstructor.parameters.length; i += 1) {
       const { name } = classConstructor.parameters[i];
       const normalizedName = Container.normalize(name);
 
-      if (this.isDependencyResolved(normalizedName)) {
-        return this.dependencies[normalizedName].value;
+      if (!this.isDependencyResolved(normalizedName)) {
+        resolvedDependencies.push(this.resolve(normalizedName));
       }
-
-      resolvedDependencies.push(this.resolve(normalizedName));
     }
 
-    // Now create an instance of this key
-    // eslint-disable-next-line new-cap
-    this.dependencies[key].value = new this.dependencies[key].reference(...resolvedDependencies);
+    this.dependencies[key].instructions = () => (
+      new this.dependencies[key].reference(...resolvedDependencies.map((dependency: Dependency) => {
+        if (dependency.type === DependencyType.Normal) {
+          return dependency.instructions?.call(this);
+        }
+
+        return dependency.instance;
+      }))
+    );
+
+    if (this.dependencies[key].type === DependencyType.Singleton) {
+      this.dependencies[key].instance = this.dependencies[key].instructions?.call(this);
+    }
+
     this.dependencies[key].resolved = true;
 
-    return this.dependencies[key].value;
+    return this.dependencies[key];
   }
 
   private static normalize(string: string): string {

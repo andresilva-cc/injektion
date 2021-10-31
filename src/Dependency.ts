@@ -1,6 +1,10 @@
+import DependencyType from './DependencyType';
+
 interface Dependency {
-  reference: any;
-  value?: any;
+  type: DependencyType;
+  reference: typeof Function;
+  instructions?: () => any;
+  instance?: any;
   resolved: boolean;
 }
 
