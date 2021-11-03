@@ -73,7 +73,7 @@ class Container {
     return this.dependencies[normalizedKey].instance;
   }
 
-  private resolve(key: string): any {
+  private resolve(key: string): void {
     const { classConstructor } = new ReflectionClass(this.dependencies[key].reference);
 
     const resolvedDependencies: Array<any> = [];
@@ -83,17 +83,19 @@ class Container {
       const normalizedName = Container.normalize(name);
 
       if (!this.isDependencyResolved(normalizedName)) {
-        resolvedDependencies.push(this.resolve(normalizedName));
+        this.resolve(normalizedName);
       }
+
+      resolvedDependencies.push(normalizedName);
     }
 
     this.dependencies[key].instructions = () => (
-      new this.dependencies[key].reference(...resolvedDependencies.map((dependency: Dependency) => {
-        if (dependency.type === DependencyType.Normal) {
-          return dependency.instructions?.call(this);
+      new this.dependencies[key].reference(...resolvedDependencies.map((dependencyKey: string) => {
+        if (this.dependencies[dependencyKey].type === DependencyType.Normal) {
+          return this.dependencies[dependencyKey].instructions?.call(this);
         }
 
-        return dependency.instance;
+        return this.dependencies[dependencyKey].instance;
       }))
     );
 
@@ -102,8 +104,6 @@ class Container {
     }
 
     this.dependencies[key].resolved = true;
-
-    return this.dependencies[key];
   }
 
   private static normalize(string: string): string {
@@ -117,6 +117,10 @@ class Container {
   }
 
   private isDependencyResolved(key: string): boolean {
+    if (!this.has(key)) {
+      throw new Error(`Couldn't find dependency ${key} in the container`);
+    }
+
     return this.dependencies[key].resolved;
   }
 }
