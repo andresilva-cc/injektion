@@ -84,12 +84,17 @@ new Container(options);
 interface ContainerOptions {
   autoloadBaseDir: string;
 }
+
+// Example
+const container = new Container({
+  autoloadBaseDir: './src/app'
+})
 ```
 
 ### Autoloading dependencies
 
 ```typescript
-autoload(): Promise<void>;
+container.autoload(): Promise<void>;
 
 // Example
 await container.autoload();
