@@ -1,7 +1,7 @@
 {
   "name": "injektion",
   "description": "Decorator-less dependency injection for JavaScript and TypeScript",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
