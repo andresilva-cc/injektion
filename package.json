@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/andresilva-cc/injektion#readme",
   "dependencies": {
-    "reflection-function": "^1.0.2"
+    "reflection-function": "^1.0.3"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
