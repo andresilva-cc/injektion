@@ -1,7 +1,6 @@
 /* eslint-disable new-cap */
 
 import { ReflectionClass } from 'reflection-function';
-import ContainerOptions from './ContainerOptions';
 import DependencyType from './DependencyType';
 import ClassFinder from './ClassFinder';
 import Dependency from './Dependency';
@@ -9,12 +8,18 @@ import Dependency from './Dependency';
 class Container {
   private dependencies: Record<string, Dependency> = {};
 
-  constructor(
-    private options: ContainerOptions,
-  ) {}
+  private static instance: Container;
 
-  public async autoload(): Promise<void> {
-    const dependencies = await ClassFinder.find(this.options.autoloadBaseDir);
+  public static getInstance(): Container {
+    if (!Container.instance) {
+      Container.instance = new Container();
+    }
+
+    return Container.instance;
+  }
+
+  public async autoload(baseDirectory: string): Promise<void> {
+    const dependencies = await ClassFinder.find(baseDirectory);
 
     dependencies.forEach((dependency) => {
       this.register(dependency);
