@@ -5,7 +5,7 @@ describe('Container', () => {
   let userController: UserController;
 
   beforeAll(async () => {
-    await container.autoload('./src/tests/Mock');
+    await container.autoload();
     userController = <UserController>container.get('UserController');
   });
 
