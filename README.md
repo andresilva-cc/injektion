@@ -51,14 +51,16 @@ export default () => {
 };
 ```
 
-Somewhere where your application starts, call the autoload method from the container to automatically load the dependencies based on the base path you provided:
+Somewhere where your application starts, run the default export of the file you just created (to bind the dependencies) and the `autoload` method from the container to automatically load the dependencies based on the base path you provided:
 
 ```typescript
 import { Container } from 'injektion';
+import bindDependencies from './config/dependencies.ts';
 
 // ...
 
 const container = Container.getInstance();
+bindDependencies();
 await container.autoload('./src/app');
 ```
 
