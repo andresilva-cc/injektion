@@ -85,14 +85,14 @@ class Container {
    * @param {*} reference Reference to the dependency
    * @memberof Container
    */
-  public singleton(reference: any): void {
+  public singleton(reference: Function): void {
     const { name } = new ReflectionClass(reference);
 
     const normalizedName = Container.normalize(name);
 
     this.dependencies[normalizedName] = {
       type: DependencyType.Singleton,
-      reference,
+      reference: reference as typeof Function,
       resolved: false,
     };
   }
