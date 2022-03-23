@@ -1,11 +1,15 @@
-import container from './Mock/container';
+import Container from '../Container';
+import bindDependencies from './Mock/Config/dependencies';
 import UserController from './Mock/UserController';
 
 describe('Container', () => {
+  const container = Container.getInstance();
   let userController: UserController;
 
+  bindDependencies();
+
   beforeAll(async () => {
-    await container.autoload();
+    await container.autoload('./src/tests/Mock');
     userController = <UserController>container.get('UserController');
   });
 
