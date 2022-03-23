@@ -1,7 +1,6 @@
 /* eslint-disable new-cap */
 
 import { ReflectionClass } from 'reflection-function';
-import ContainerOptions from './ContainerOptions';
 import DependencyType from './DependencyType';
 import ClassFinder from './ClassFinder';
 import Dependency from './Dependency';
@@ -9,18 +8,44 @@ import Dependency from './Dependency';
 class Container {
   private dependencies: Record<string, Dependency> = {};
 
-  constructor(
-    private options: ContainerOptions,
-  ) {}
+  private static instance: Container;
 
-  public async autoload(): Promise<void> {
-    const dependencies = await ClassFinder.find(this.options.autoloadBaseDir);
+  /**
+   * Get an instance of Container
+   *
+   * @static
+   * @returns {Container} Instance of Container
+   * @memberof Container
+   */
+  public static getInstance(): Container {
+    if (!Container.instance) {
+      Container.instance = new Container();
+    }
+
+    return Container.instance;
+  }
+
+  /**
+   * Automatically load dependencies based on a given path
+   *
+   * @param {string} baseDirectory Base directory to look for dependencies
+   * @returns {Promise<void>} A promise that resolves when the autoload is complete
+   * @memberof Container
+   */
+  public async autoload(baseDirectory: string): Promise<void> {
+    const dependencies = await ClassFinder.find(baseDirectory);
 
     dependencies.forEach((dependency) => {
       this.register(dependency);
     });
   }
 
+  /**
+   * Manually register a dependency
+   *
+   * @param {Function} reference Reference to the dependency
+   * @memberof Container
+   */
   public register(reference: Function): void {
     const { name } = new ReflectionClass(reference);
 
@@ -33,6 +58,17 @@ class Container {
     };
   }
 
+  /**
+   * Bind a custom name to a dependency
+   *
+   * Since JavaScript has no interfaces, this method can be used to simulate the binding of an
+   * interface to a concrete class. Just provide a name like 'UserRepository' and bind it to a class
+   * like 'SequelizeUserRepository'
+   *
+   * @param {string} name Custom name to bind to
+   * @param {Function} reference Reference to the dependency
+   * @memberof Container
+   */
   public bind(name: string, reference: Function): void {
     const normalizedName = Container.normalize(name);
 
@@ -43,18 +79,32 @@ class Container {
     };
   }
 
-  public singleton(reference: any): void {
+  /**
+   * Register a dependency as a singleton
+   *
+   * @param {*} reference Reference to the dependency
+   * @memberof Container
+   */
+  public singleton(reference: Function): void {
     const { name } = new ReflectionClass(reference);
 
     const normalizedName = Container.normalize(name);
 
     this.dependencies[normalizedName] = {
       type: DependencyType.Singleton,
-      reference,
+      reference: reference as typeof Function,
       resolved: false,
     };
   }
 
+  /**
+   * Get a dependency from the container and recursively resolve its dependencies
+   *
+   * @template T Type of the dependency
+   * @param {string} key Key of the dependency
+   * @returns {T} Resolved dependency
+   * @memberof Container
+   */
   public get<T>(key: string): T {
     const normalizedKey = Container.normalize(key);
 
@@ -110,6 +160,13 @@ class Container {
     return string.toLowerCase().replace(/[_-]/g, '');
   }
 
+  /**
+   * Check if a dependency exists in the container
+   *
+   * @param {string} key Key of the dependency
+   * @returns {boolean} True if the dependency exists, false if not
+   * @memberof Container
+   */
   public has(key: string): boolean {
     const normalizedKey = Container.normalize(key);
 

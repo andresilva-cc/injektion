@@ -35,7 +35,7 @@ Install the package with:
 npm install injektion
 ```
 
-Create a file somewhere in your project to store your container instance and manual bindings, like for example a `./src/container.ts` with this content:
+Create a file somewhere in your project to store your manual bindings, like for example a `./src/config/dependencies.ts` with this content:
 
 ```typescript
 import { Container } from 'injektion';
@@ -43,22 +43,25 @@ import {
   SequelizeUserActivationRepository, SequelizeUserRepository,
 } from './app/Repositories/Implementation';
 
-const container = new Container({
-  autoloadBaseDir: './src/app',
-});
+export default () => {
+  const container = Container.getInstance();
 
-container.bind('UserRepository', SequelizeUserRepository);
-container.bind('UserActivationRepository', SequelizeUserActivationRepository);
-
-export default container;
+  container.bind('UserRepository', SequelizeUserRepository);
+  container.bind('UserActivationRepository', SequelizeUserActivationRepository);
+};
 ```
 
-The `autoloadBaseDir` option determines the base path where the dependencies will be autoloaded into the container.
-
-Somewhere where your application starts, call the autoload method from the container to automatically load the dependencies based on the base path you provided:
+Somewhere where your application starts, run the default export of the file you just created (to bind the dependencies) and the `autoload` method from the container to automatically load the dependencies based on the base path you provided:
 
 ```typescript
-await container.autoload();
+import { Container } from 'injektion';
+import bindDependencies from './config/dependencies.ts';
+
+// ...
+
+const container = Container.getInstance();
+bindDependencies();
+await container.autoload('./src/app');
 ```
 
 ## Usage
@@ -66,6 +69,11 @@ await container.autoload();
 To start resolving the dependencies, an entry point is needed. For example, if you have the dependency structure `AuthController <- AuthService <- UserRepository`, you would call the `get` method from the container, requesting the `AuthController`, and each dependency is recursively resolved:
 
 ```typescript
+import { Container } from 'injektion';
+
+// ...
+
+const container = Container.getInstance();
 const authController = <AuthController>container.get('AuthController');
 ```
 
@@ -75,29 +83,35 @@ Check the **API** section below for more info.
 
 ## API
 
-### Creating an instance
+### Creating/getting an instance
+
+The easiest way is to use the container as a singleton. Whenever you need the container instance, just call the `getInstance` method:
 
 ```typescript
-new Container(options);
-
-// Options
-interface ContainerOptions {
-  autoloadBaseDir: string;
-}
+Container.getInstance(): Container
 
 // Example
-const container = new Container({
-  autoloadBaseDir: './src/app'
-})
+const container = Container.getInstance();
+```
+
+On the other hand, if you want to create an instance yourself, just instantiate it like any class, but you will have to store it properly. A nice hint is to create a file just for the container instance and its manual bindings, then export it as a module:
+
+```typescript
+new Container();
+
+// Example
+const container = new Container()
+
+export default container;
 ```
 
 ### Autoloading dependencies
 
 ```typescript
-container.autoload(): Promise<void>;
+container.autoload(baseDirectory: string): Promise<void>;
 
 // Example
-await container.autoload();
+await container.autoload('./src/app');
 ```
 
 ### Manually registering a dependency
