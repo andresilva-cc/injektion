@@ -1,15 +1,16 @@
 import Container from '../Container';
 import bindDependencies from './Mock/Config/dependencies';
+import SingletonTest from './Mock/SingletonTest';
 import UserController from './Mock/UserController';
 
 describe('Container', () => {
   const container = Container.getInstance();
   let userController: UserController;
 
-  bindDependencies();
-
   beforeAll(async () => {
     await container.autoload('./src/tests/Mock');
+    bindDependencies();
+
     userController = <UserController>container.get('UserController');
   });
 
@@ -36,5 +37,19 @@ describe('Container', () => {
 
   it('should throw when trying to get an inexistent dependency', () => {
     expect(() => container.get('OrderRepository')).toThrow();
+  });
+
+  test('singletons should return the same instance', (done) => {
+    const singleton1 = <SingletonTest>container.get('SingletonTest');
+    setTimeout(() => {
+      try {
+        const singleton2 = <SingletonTest>container.get('SingletonTest');
+
+        expect(singleton1.createdAt).toStrictEqual(singleton2.createdAt);
+        done();
+      } catch (error) {
+        done(error);
+      }
+    }, 5);
   });
 });
