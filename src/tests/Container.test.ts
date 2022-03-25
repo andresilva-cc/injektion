@@ -35,10 +35,6 @@ describe('Container', () => {
     expect(result.body.users[0].name).toBe('Jon Snow');
   });
 
-  it('should throw when trying to get an inexistent dependency', () => {
-    expect(() => container.get('OrderRepository')).toThrow();
-  });
-
   test('singletons should return the same instance', (done) => {
     const singleton1 = <SingletonTest>container.get('SingletonTest');
     setTimeout(() => {
@@ -51,5 +47,13 @@ describe('Container', () => {
         done(error);
       }
     }, 5);
+  });
+
+  it('should throw when trying to get an inexistent dependency', () => {
+    expect(() => container.get('OrderRepository')).toThrow();
+  });
+
+  it('should throw when trying to resolve an inexistent dependency', () => {
+    expect(() => container.get('Route')).toThrow();
   });
 });
