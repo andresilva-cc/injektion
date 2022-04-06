@@ -12,14 +12,20 @@ class Container {
    * Automatically load dependencies based on a given path
    *
    * @param {string} baseDirectory Base directory to look for dependencies
+   * @param {boolean} [replace=false] Whether to replace dependencies already registered
    * @returns {Promise<void>} A promise that resolves when the autoload is complete
    * @memberof Container
    */
-  public static async autoload(baseDirectory: string): Promise<void> {
+  public static async autoload(baseDirectory: string, replace = false): Promise<void> {
     const dependencies = await ClassFinder.find(baseDirectory);
 
     dependencies.forEach((dependency) => {
-      this.register(dependency);
+      const { name } = new ReflectionClass(dependency);
+      const normalizedName = Container.normalize(name);
+
+      if (replace || !this.has(normalizedName)) {
+        this.register(dependency);
+      }
     });
   }
 

@@ -82,10 +82,13 @@ Check the **API** section below for more info.
 ### Autoloading dependencies
 
 ```typescript
-Container.autoload(baseDirectory: string): Promise<void>;
+Container.autoload(baseDirectory: string, replace = false): Promise<void>;
 
-// Example
+// Example: without replacing already registered dependencies
 await Container.autoload('./src/app');
+
+// Example: replacing already registered dependencies
+await Container.autoload('./src/app', true);
 ```
 
 ### Manually registering a dependency
