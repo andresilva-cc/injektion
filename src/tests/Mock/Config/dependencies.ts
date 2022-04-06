@@ -3,8 +3,6 @@ import SingletonTest from '../SingletonTest';
 import MockUserRepository from '../MockUserRepository';
 
 export default () => {
-  const container = Container.getInstance();
-
-  container.singleton(SingletonTest);
-  container.bind('UserRepository', MockUserRepository);
+  Container.singleton(SingletonTest);
+  Container.bind('UserRepository', MockUserRepository);
 };

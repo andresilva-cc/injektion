@@ -44,10 +44,8 @@ import {
 } from './app/Repositories/Implementation';
 
 export default () => {
-  const container = Container.getInstance();
-
-  container.bind('UserRepository', SequelizeUserRepository);
-  container.bind('UserActivationRepository', SequelizeUserActivationRepository);
+  Container.bind('UserRepository', SequelizeUserRepository);
+  Container.bind('UserActivationRepository', SequelizeUserActivationRepository);
 };
 ```
 
@@ -59,9 +57,8 @@ import bindDependencies from './config/dependencies.ts';
 
 // ...
 
-const container = Container.getInstance();
 bindDependencies();
-await container.autoload('./src/app');
+await Container.autoload('./src/app');
 ```
 
 ## Usage
@@ -73,8 +70,7 @@ import { Container } from 'injektion';
 
 // ...
 
-const container = Container.getInstance();
-const authController = <AuthController>container.get('AuthController');
+const authController = <AuthController>Container.get('AuthController');
 ```
 
 Ensure that all of your constructor parameters have the same name as the class you want to inject. For example, if you want to inject a class named `AuthService`, name the parameter `authService` or in any case you want, like `auth_service`. The case is not important, the name itself is.
@@ -83,88 +79,66 @@ Check the **API** section below for more info.
 
 ## API
 
-### Creating/getting an instance
-
-The easiest way is to use the container as a singleton. Whenever you need the container instance, just call the `getInstance` method:
-
-```typescript
-Container.getInstance(): Container
-
-// Example
-const container = Container.getInstance();
-```
-
-On the other hand, if you want to create an instance yourself, just instantiate it like any class, but you will have to store it properly. A nice hint is to create a file just for the container instance and its manual bindings, then export it as a module:
-
-```typescript
-new Container();
-
-// Example
-const container = new Container()
-
-export default container;
-```
-
 ### Autoloading dependencies
 
 ```typescript
-container.autoload(baseDirectory: string): Promise<void>;
+Container.autoload(baseDirectory: string): Promise<void>;
 
 // Example
-await container.autoload('./src/app');
+await Container.autoload('./src/app');
 ```
 
 ### Manually registering a dependency
 
 ```typescript
-container.register(reference: Function): void;
+Container.register(reference: Function): void;
 
 // Example
 import { AuthController } from './app/Controllers';
 
-container.register(AuthController)
+Container.register(AuthController)
 ```
 
 ### Binding an interface (name) to a class
 
 ```typescript
-container.bind(name: string, reference: Function): void;
+Container.bind(name: string, reference: Function): void;
 
 // Example
 import { SequelizeUserRepository } from './app/Repositories/Implementation';
 
-container.bind('UserRepository', SequelizeUserRepository)
+Container.bind('UserRepository', SequelizeUserRepository)
 ```
 
 ### Registering a dependency as a Singleton
 
 ```typescript
-container.singleton(reference: any): void;
+Container.singleton(reference: any): void;
 
 // Example
 import { AuthService } from './app/Services';
 
-container.singleton(AuthService);
+Container.singleton(AuthService);
 ```
 
 ### Getting a dependency from the container and recursively resolving its dependencies
 
 ```typescript
-container.get<T>(key: string): T;
+Container.get<T>(key: string): T;
 
 // Example
 import { MailFacade } from './app/Facades';
 
-const mailFacade = <MailFacade>container.get('MailFacade');
+const mailFacade = <MailFacade>Container.get('MailFacade');
 ```
 
 ### Checking if a dependency exists in the container
 
 ```typescript
-container.has(key: string): boolean;
+Container.has(key: string): boolean;
 
 // Example
-const exists = container.has('ActivationService');
+const exists = Container.has('ActivationService');
 ```
 
 ## Development

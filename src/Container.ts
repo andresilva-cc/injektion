@@ -6,24 +6,7 @@ import ClassFinder from './ClassFinder';
 import Dependency from './Dependency';
 
 class Container {
-  private dependencies: Record<string, Dependency> = {};
-
-  private static instance: Container;
-
-  /**
-   * Get an instance of Container
-   *
-   * @static
-   * @returns {Container} Instance of Container
-   * @memberof Container
-   */
-  public static getInstance(): Container {
-    if (!Container.instance) {
-      Container.instance = new Container();
-    }
-
-    return Container.instance;
-  }
+  private static dependencies: Record<string, Dependency> = {};
 
   /**
    * Automatically load dependencies based on a given path
@@ -32,7 +15,7 @@ class Container {
    * @returns {Promise<void>} A promise that resolves when the autoload is complete
    * @memberof Container
    */
-  public async autoload(baseDirectory: string): Promise<void> {
+  public static async autoload(baseDirectory: string): Promise<void> {
     const dependencies = await ClassFinder.find(baseDirectory);
 
     dependencies.forEach((dependency) => {
@@ -46,7 +29,7 @@ class Container {
    * @param {Function} reference Reference to the dependency
    * @memberof Container
    */
-  public register(reference: Function): void {
+  public static register(reference: Function): void {
     const { name } = new ReflectionClass(reference);
 
     const normalizedName = Container.normalize(name);
@@ -69,7 +52,7 @@ class Container {
    * @param {Function} reference Reference to the dependency
    * @memberof Container
    */
-  public bind(name: string, reference: Function): void {
+  public static bind(name: string, reference: Function): void {
     const normalizedName = Container.normalize(name);
 
     this.dependencies[normalizedName] = {
@@ -85,7 +68,7 @@ class Container {
    * @param {*} reference Reference to the dependency
    * @memberof Container
    */
-  public singleton(reference: Function): void {
+  public static singleton(reference: Function): void {
     const { name } = new ReflectionClass(reference);
 
     const normalizedName = Container.normalize(name);
@@ -105,7 +88,7 @@ class Container {
    * @returns {T} Resolved dependency
    * @memberof Container
    */
-  public get<T>(key: string): T {
+  public static get<T>(key: string): T {
     const normalizedKey = Container.normalize(key);
 
     if (!this.has(normalizedKey)) {
@@ -123,7 +106,7 @@ class Container {
     return this.dependencies[normalizedKey].instance;
   }
 
-  private resolve(key: string): void {
+  private static resolve(key: string): void {
     const { classConstructor } = new ReflectionClass(this.dependencies[key].reference);
 
     const resolvedDependencies: Array<any> = [];
@@ -167,13 +150,13 @@ class Container {
    * @returns {boolean} True if the dependency exists, false if not
    * @memberof Container
    */
-  public has(key: string): boolean {
+  public static has(key: string): boolean {
     const normalizedKey = Container.normalize(key);
 
     return !!this.dependencies[normalizedKey];
   }
 
-  private isDependencyResolved(key: string): boolean {
+  private static isDependencyResolved(key: string): boolean {
     if (!this.has(key)) {
       throw new Error(`Couldn't find dependency ${key} in the container`);
     }

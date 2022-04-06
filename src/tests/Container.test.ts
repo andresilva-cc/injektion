@@ -4,27 +4,26 @@ import SingletonTest from './Mock/SingletonTest';
 import UserController from './Mock/UserController';
 
 describe('Container', () => {
-  const container = Container.getInstance();
   let userController: UserController;
 
   beforeAll(async () => {
-    await container.autoload('./src/tests/Mock');
+    await Container.autoload('./src/tests/Mock');
     bindDependencies();
 
-    userController = <UserController>container.get('UserController');
+    userController = <UserController>Container.get('UserController');
   });
 
   it('should contain the registered dependencies', () => {
-    expect(container.has('UserController')).toBe(true);
-    expect(container.has('UserService')).toBe(true);
-    expect(container.has('UserRepository')).toBe(true);
+    expect(Container.has('UserController')).toBe(true);
+    expect(Container.has('UserService')).toBe(true);
+    expect(Container.has('UserRepository')).toBe(true);
   });
 
   it('should normalize the dependency name', () => {
-    expect(container.has('UserController')).toBe(true);
-    expect(container.has('userController')).toBe(true);
-    expect(container.has('usercontroller')).toBe(true);
-    expect(container.has('user_controller')).toBe(true);
+    expect(Container.has('UserController')).toBe(true);
+    expect(Container.has('userController')).toBe(true);
+    expect(Container.has('usercontroller')).toBe(true);
+    expect(Container.has('user_controller')).toBe(true);
   });
 
   test('class method should return the correct data using nested dependencies', () => {
@@ -36,10 +35,10 @@ describe('Container', () => {
   });
 
   test('singletons should return the same instance', (done) => {
-    const singleton1 = <SingletonTest>container.get('SingletonTest');
+    const singleton1 = <SingletonTest>Container.get('SingletonTest');
     setTimeout(() => {
       try {
-        const singleton2 = <SingletonTest>container.get('SingletonTest');
+        const singleton2 = <SingletonTest>Container.get('SingletonTest');
 
         expect(singleton1.createdAt).toStrictEqual(singleton2.createdAt);
         done();
@@ -50,10 +49,10 @@ describe('Container', () => {
   });
 
   it('should throw when trying to get an inexistent dependency', () => {
-    expect(() => container.get('OrderRepository')).toThrow();
+    expect(() => Container.get('OrderRepository')).toThrow();
   });
 
   it('should throw when trying to resolve an inexistent dependency', () => {
-    expect(() => container.get('Route')).toThrow();
+    expect(() => Container.get('Route')).toThrow();
   });
 });
