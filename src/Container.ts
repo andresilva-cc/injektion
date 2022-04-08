@@ -5,6 +5,11 @@ import DependencyType from './DependencyType';
 import ClassFinder from './ClassFinder';
 import Dependency from './Dependency';
 
+/**
+ *
+ *
+ * @class Container
+ */
 class Container {
   private static dependencies: Record<string, Dependency> = {};
 
@@ -112,6 +117,14 @@ class Container {
     return this.dependencies[normalizedKey].instance;
   }
 
+  /**
+   * Recursively resolve a class dependencies
+   *
+   * @private
+   * @static
+   * @param {string} key Key of the dependency
+   * @memberof Container
+   */
   private static resolve(key: string): void {
     const { classConstructor } = new ReflectionClass(this.dependencies[key].reference);
 
@@ -145,8 +158,17 @@ class Container {
     this.dependencies[key].resolved = true;
   }
 
-  private static normalize(string: string): string {
-    return string.toLowerCase().replace(/[_-]/g, '');
+  /**
+   * Normalize a dependency name
+   *
+   * @private
+   * @static
+   * @param {string} name Dependency name
+   * @returns {string} Normalized dependency name
+   * @memberof Container
+   */
+  private static normalize(name: string): string {
+    return name.toLowerCase().replace(/[_-]/g, '');
   }
 
   /**
@@ -162,6 +184,15 @@ class Container {
     return !!this.dependencies[normalizedKey];
   }
 
+  /**
+   * Check if a dependency is resolved
+   *
+   * @private
+   * @static
+   * @param {string} key Key of the dependency
+   * @returns {boolean} True if the dependency is resolved, false if not
+   * @memberof Container
+   */
   private static isDependencyResolved(key: string): boolean {
     if (!this.has(key)) {
       throw new Error(`Couldn't find dependency ${key} in the container`);
