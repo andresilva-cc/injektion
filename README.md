@@ -12,7 +12,7 @@ Decorator-less dependency injection for JavaScript and TypeScript.
 - [API](#api)
   - [Autoloading dependencies](#autoloading-dependencies)
   - [Manually registering a dependency](#manually-registering-a-dependency)
-  - [Binding an interface (name) to a class](#binding-an-interface-name-to-a-class)
+  - [Binding a name (interface) to a class](#binding-a-name-interface-to-a-class)
   - [Registering a dependency as a Singleton](#registering-a-dependency-as-a-singleton)
   - [Getting a dependency from the container and recursively resolving its dependencies](#getting-a-dependency-from-the-container-and-recursively-resolving-its-dependencies)
   - [Checking if a dependency exists in the container](#checking-if-a-dependency-exists-in-the-container)
@@ -100,6 +100,8 @@ Check the [API](#api) section below for more info.
 
 ### Autoloading dependencies
 
+Most of your dependencies can be autoloaded by Injektion. To do that, just call the `autoload` method from the container passing a base directory. Injektion will recursively scan for dependencies and register them automatically in the container:
+
 ```typescript
 Container.autoload(baseDirectory: string, replace = false): Promise<void>;
 
@@ -110,7 +112,11 @@ await Container.autoload('./src/app');
 await Container.autoload('./src/app', true);
 ```
 
+By default, the `autoload` method will not replace already registered dependencies. This prevents your manual bindings to get overridden. However, if you still want to replace automatically, just pass `true` as the second parameter.
+
 ### Manually registering a dependency
+
+You can also manually register a dependency in the container by providing a reference to the class:
 
 ```typescript
 Container.register(reference: Function): void;
@@ -121,7 +127,9 @@ import { AuthController } from './app/Controllers';
 Container.register(AuthController)
 ```
 
-### Binding an interface (name) to a class
+### Binding a name (interface) to a class
+
+Because JavaScript does not have interfaces, we provide a `bind` method that allows you to simulate this kind of behavior. Take the example below, whenever Injektion finds a `UserRepository` dependency, it will auto inject `SequelizeUserRepository`. You can now swap implementations with just one line of code:
 
 ```typescript
 Container.bind(name: string, reference: Function): void;
@@ -134,6 +142,8 @@ Container.bind('UserRepository', SequelizeUserRepository)
 
 ### Registering a dependency as a Singleton
 
+The `singleton` method registers a dependency that should only be instantiated one time. Once a singleton is resolved, the same instance will be returned on subsequent calls:
+
 ```typescript
 Container.singleton(reference: any): void;
 
@@ -145,6 +155,8 @@ Container.singleton(AuthService);
 
 ### Getting a dependency from the container and recursively resolving its dependencies
 
+You can use the `get` method to get a dependency instance from the container, just pass the dependency name you wish to resolve:
+
 ```typescript
 Container.get<T>(key: string): T;
 
@@ -154,7 +166,11 @@ import { MailFacade } from './app/Facades';
 const mailFacade = <MailFacade>Container.get('MailFacade');
 ```
 
+If you are using TypeScript, you can also provide a type argument to light up IntelliSense.
+
 ### Checking if a dependency exists in the container
+
+Last but not least, you can also check if a given dependency exists in the container by providing its name:
 
 ```typescript
 Container.has(key: string): boolean;
