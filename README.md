@@ -94,7 +94,7 @@ const authController = <AuthController>Container.get('AuthController');
 
 Ensure that all of your constructor parameters have the same name as the class you want to inject. For example, if you want to inject a class named `AuthService`, name the parameter `authService` or in any case you want, like `auth_service`. The case is not important, the name itself is.
 
-Check the **API** section below for more info.
+Check the [API](#api) section below for more info.
 
 ## API
 
