@@ -4,6 +4,22 @@ Decorator-less dependency injection for JavaScript and TypeScript.
 
 **NOTE: This project is in early development, so expect bugs and missing features. Any help would be appreciated :)**
 
+## Summary
+
+- [Why?](#why)
+- [Setup](#setup)
+- [Usage](#usage)
+- [API](#api)
+  - [Autoloading dependencies](#autoloading-dependencies)
+  - [Manually registering a dependency](#manually-registering-a-dependency)
+  - [Binding an interface (name) to a class](#binding-an-interface-name-to-a-class)
+  - [Registering a dependency as a Singleton](#registering-a-dependency-as-a-singleton)
+  - [Getting a dependency from the container and recursively resolving its dependencies](#getting-a-dependency-from-the-container-and-recursively-resolving-its-dependencies)
+  - [Checking if a dependency exists in the container](#checking-if-a-dependency-exists-in-the-container)
+- [Development](#development)
+  - [Testing](#testing)
+  - [Building](#building)
+
 ## Why?
 
 I've tried several dependency injection frameworks for JavaScript and TypeScript. There are two main things I didn't like about them:
