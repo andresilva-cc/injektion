@@ -6,7 +6,7 @@ Decorator-less dependency injection for JavaScript and TypeScript.
 
 ## Summary
 
-- [Why?](#why)
+- [Why and how?](#why-and-how)
 - [Setup](#setup)
 - [Usage](#usage)
 - [API](#api)
@@ -20,28 +20,31 @@ Decorator-less dependency injection for JavaScript and TypeScript.
   - [Testing](#testing)
   - [Building](#building)
 
-## Why?
+## Why and how?
 
-I've tried several dependency injection frameworks for JavaScript and TypeScript. There are two main things I didn't like about them:
+<details>
+  <summary>Long story, expand if you want to know more</summary>
+  I've tried several dependency injection frameworks for JavaScript and TypeScript. There are two main things I didn't like about them:
 
-1. Decorators
-2. Too much manual configuration
+  1. Decorators
+  2. Too much manual configuration
 
-So I've started thinking about how a new dependency injection framework could be better.
+  So I've started thinking about how a new dependency injection framework could be better.
 
-First of all, I need to somehow get information about a specific class, like its name and constructor parameters. It turns out that JavaScript doesn't have a built-in Reflection API for that kind of task. So that's why they use [reflect-metadata](https://github.com/rbuckton/reflect-metadata).
+  First of all, I need to somehow get information about a specific class, like its name and constructor parameters. It turns out that JavaScript doesn't have a built-in Reflection API for that kind of task. So that's why they use [reflect-metadata](https://github.com/rbuckton/reflect-metadata).
 
-So I've created my own reflection package: [reflection-function](https://github.com/andresilva-cc/reflection-function). Now I can get all those information from a function and a class.
+  So I've created my own reflection package: [reflection-function](https://github.com/andresilva-cc/reflection-function). Now I can get all those information from a function and a class.
 
-But there's still a problem here: JavaScript doesn't have types. Even TypeScript doesn't have types at runtime or after the code has been compiled. How am I gonna know which dependency I have to inject if there's no information about types?
+  But there's still a problem here: JavaScript doesn't have types. Even TypeScript doesn't have types at runtime or after the code has been compiled. How am I gonna know which dependency I have to inject if there's no information about types?
 
-Well, the only thing that I have left is the parameter name. So that's what I'm going to use. Dependency injections are made based on the parameter name. For example, if you have a class named `UserService` and you need to inject it in another class constructor, you would name the parameter `userService`, or maybe `user_service` (the letter case is up to you).
+  Well, the only thing that I have left is the parameter name. So that's what I'm going to use. Dependency injections are made based on the parameter name. For example, if you have a class named `UserService` and you need to inject it in another class constructor, you would name the parameter `userService`, or maybe `user_service` (the letter case is up to you).
 
-Ok, now we have dependency injection without decorators. But what about "too much manual configuration"?
+  Ok, now we have dependency injection without decorators. But what about "too much manual configuration"?
 
-That's simple. I wrote a class that goes through all your project files and dynamically imports them (with `import()`). It works with default and named exports and it only imports classes. Those imports are stored in the dependency container and are available to use with zero configuration.
+  That's simple. I wrote a class that goes through all your project files and dynamically imports them (with `import()`). It works with default and named exports and it only imports classes. Those imports are stored in the dependency container and are available to use with zero configuration.
 
-Of course, that works only for concrete classes. As in Laravel's service container, if your class depends on interfaces, you need to manually bind the interface to the concrete class. Well, while TypeScript does have interfaces, JavaScript doesn't, so in the end interfaces doesn't even exist at all, so you just manually bind a name, like `UserRepository` to a real object, like `SequelizeUserRepository`.
+  Of course, that works only for concrete classes. As in Laravel's service container, if your class depends on interfaces, you need to manually bind the interface to the concrete class. Well, while TypeScript does have interfaces, JavaScript doesn't, so in the end interfaces doesn't even exist at all, so you just manually bind a name, like `UserRepository` to a real object, like `SequelizeUserRepository`.
+</details>
 
 ## Setup
 
