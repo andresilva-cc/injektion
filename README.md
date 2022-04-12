@@ -153,6 +153,21 @@ import { AuthService } from './app/Services';
 Container.singleton(AuthService);
 ```
 
+### Binding a dependency to a given instance
+
+You can also bind an existing instance into the container using the `instance` method:
+
+```typescript
+Container.instance(reference: Function, instance: any): void;
+
+// Example
+import { BlogCrawler } from './app/BlogCrawler';
+
+const crawler = new BlogCrawler('https://some.blog/');
+
+Container.instance(BlogCrawler, crawler);
+```
+
 ### Getting a dependency from the container and recursively resolving its dependencies
 
 You can use the `get` method to get a dependency instance from the container, just pass the dependency name you wish to resolve:
