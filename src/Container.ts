@@ -91,6 +91,14 @@ class Container {
     };
   }
 
+  /**
+   * Register a dependency with a given instance
+   *
+   * @static
+   * @param {Function} reference Reference to the dependency
+   * @param {*} instance Object instance
+   * @memberof Container
+   */
   public static instance(reference: Function, instance: any): void {
     const { name } = new ReflectionClass(reference);
 
