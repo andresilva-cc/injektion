@@ -1,6 +1,7 @@
 import Container from '../Container';
 import bindDependencies from './Mock/Config/dependencies';
 import SingletonTest from './Mock/SingletonTest';
+import User from './Mock/User';
 import UserController from './Mock/UserController';
 
 describe('Container', () => {
@@ -46,6 +47,15 @@ describe('Container', () => {
         done(error);
       }
     }, 5);
+  });
+
+  test('register instance', () => {
+    const instance = new User('Slash');
+
+    Container.instance(User, instance);
+    const userFromContainer = <User>Container.get('User');
+
+    expect(userFromContainer.name).toBe('Slash');
   });
 
   it('should throw when trying to get an inexistent dependency', () => {

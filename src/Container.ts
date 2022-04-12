@@ -91,6 +91,19 @@ class Container {
     };
   }
 
+  public static instance(reference: Function, instance: any): void {
+    const { name } = new ReflectionClass(reference);
+
+    const normalizedName = Container.normalize(name);
+
+    this.dependencies[normalizedName] = {
+      type: DependencyType.Singleton,
+      reference: reference as typeof Function,
+      instance,
+      resolved: true,
+    };
+  }
+
   /**
    * Get a dependency from the container and recursively resolve its dependencies
    *
