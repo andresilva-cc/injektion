@@ -76,7 +76,7 @@ class Container {
   /**
    * Register a dependency as a singleton
    *
-   * @param {*} reference Reference to the dependency
+   * @param {Function} reference Reference to the dependency
    * @memberof Container
    */
   public static singleton(reference: Function): void {
