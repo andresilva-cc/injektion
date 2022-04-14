@@ -145,7 +145,7 @@ Container.bind('UserRepository', SequelizeUserRepository)
 The `singleton` method registers a dependency that should only be instantiated one time. Once a singleton is resolved, the same instance will be returned on subsequent calls:
 
 ```typescript
-Container.singleton(reference: any): void;
+Container.singleton(reference: Function): void;
 
 // Example
 import { AuthService } from './app/Services';
