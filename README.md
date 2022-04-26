@@ -14,6 +14,7 @@ Decorator-less dependency injection for JavaScript and TypeScript.
   - [Binding a dependency](#binding-a-dependency)
   - [Binding a custom name to a dependency](#binding-a-custom-name-to-a-dependency)
   - [Binding a dependency as a singleton](#binding-a-dependency-as-a-singleton)
+  - [Binding a dependency to a given instance](#binding-a-dependency-to-a-given-instance)
   - [Getting a dependency from the container and recursively resolving its dependencies](#getting-a-dependency-from-the-container-and-recursively-resolving-its-dependencies)
   - [Checking if a dependency exists in the container](#checking-if-a-dependency-exists-in-the-container)
 - [Development](#development)
