@@ -4,5 +4,5 @@ import MockUserRepository from '../MockUserRepository';
 
 export default () => {
   Container.singleton(SingletonTest);
-  Container.bind('UserRepository', MockUserRepository);
+  Container.namedBind('UserRepository', MockUserRepository);
 };

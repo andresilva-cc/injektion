@@ -17,7 +17,7 @@ class Container {
    * Automatically load dependencies based on a given path
    *
    * @param {string} baseDirectory Base directory to look for dependencies
-   * @param {boolean} [replace=false] Whether to replace dependencies already registered
+   * @param {boolean} [replace=false] Whether to replace binded dependencies
    * @returns {Promise<void>} A promise that resolves when the autoload is complete
    * @memberof Container
    */
@@ -29,18 +29,18 @@ class Container {
       const normalizedName = Container.normalize(name);
 
       if (replace || !this.has(normalizedName)) {
-        this.register(dependency);
+        this.bind(dependency);
       }
     });
   }
 
   /**
-   * Manually register a dependency
+   * Bind a dependency
    *
    * @param {Function} reference Reference to the dependency
    * @memberof Container
    */
-  public static register(reference: Function): void {
+  public static bind(reference: Function): void {
     const { name } = new ReflectionClass(reference);
 
     const normalizedName = Container.normalize(name);
@@ -63,7 +63,7 @@ class Container {
    * @param {Function} reference Reference to the dependency
    * @memberof Container
    */
-  public static bind(name: string, reference: Function): void {
+  public static namedBind(name: string, reference: Function): void {
     const normalizedName = Container.normalize(name);
 
     this.dependencies[normalizedName] = {
