@@ -59,13 +59,12 @@ Create a file somewhere in your project to store your manual bindings, like for 
 
 ```typescript
 import { Container } from 'injektion';
-import {
-  SequelizeUserActivationRepository, SequelizeUserRepository,
-} from './app/Repositories/Implementation';
+import { LogParser } from './app/Utils'
+import { SequelizeUserRepository } from './app/Repositories/Implementation';
 
 export default () => {
+  Container.singleton(LogParser);
   Container.namedBind('UserRepository', SequelizeUserRepository);
-  Container.namedBind('UserActivationRepository', SequelizeUserActivationRepository);
 };
 ```
 
