@@ -74,7 +74,7 @@ class Container {
   }
 
   /**
-   * Register a dependency as a singleton
+   * Bind a dependency as a singleton
    *
    * @param {Function} reference Reference to the dependency
    * @memberof Container
@@ -92,7 +92,7 @@ class Container {
   }
 
   /**
-   * Register a dependency with a given instance
+   * Bind a dependency to a given instance
    *
    * @static
    * @param {Function} reference Reference to the dependency

@@ -11,9 +11,9 @@ Decorator-less dependency injection for JavaScript and TypeScript.
 - [Usage](#usage)
 - [API](#api)
   - [Autoloading dependencies](#autoloading-dependencies)
-  - [Manually registering a dependency](#manually-registering-a-dependency)
-  - [Binding a name (interface) to a class](#binding-a-name-interface-to-a-class)
-  - [Registering a dependency as a Singleton](#registering-a-dependency-as-a-singleton)
+  - [Binding a dependency](#binding-a-dependency)
+  - [Binding a custom name to a dependency](#binding-a-custom-name-to-a-dependency)
+  - [Binding a dependency as a singleton](#binding-a-dependency-as-a-singleton)
   - [Getting a dependency from the container and recursively resolving its dependencies](#getting-a-dependency-from-the-container-and-recursively-resolving-its-dependencies)
   - [Checking if a dependency exists in the container](#checking-if-a-dependency-exists-in-the-container)
 - [Development](#development)
@@ -63,8 +63,8 @@ import {
 } from './app/Repositories/Implementation';
 
 export default () => {
-  Container.bind('UserRepository', SequelizeUserRepository);
-  Container.bind('UserActivationRepository', SequelizeUserActivationRepository);
+  Container.namedBind('UserRepository', SequelizeUserRepository);
+  Container.namedBind('UserActivationRepository', SequelizeUserActivationRepository);
 };
 ```
 
@@ -105,44 +105,44 @@ Most of your dependencies can be autoloaded by Injektion. To do that, just call 
 ```typescript
 Container.autoload(baseDirectory: string, replace = false): Promise<void>;
 
-// Example: without replacing already registered dependencies
+// Example: without replacing binded dependencies
 await Container.autoload('./src/app');
 
-// Example: replacing already registered dependencies
+// Example: replacing binded dependencies
 await Container.autoload('./src/app', true);
 ```
 
-By default, the `autoload` method will not replace already registered dependencies. This prevents your manual bindings to get overridden. However, if you still want to replace automatically, just pass `true` as the second parameter.
+By default, the `autoload` method will not replace binded dependencies. This prevents your manual bindings to get overridden. However, if you still want to replace automatically, just pass `true` as the second parameter.
 
-### Manually registering a dependency
+### Binding a dependency
 
-You can also manually register a dependency in the container by providing a reference to the class:
+You can also manually bind a dependency in the container by providing a reference to the class:
 
 ```typescript
-Container.register(reference: Function): void;
+Container.bind(reference: Function): void;
 
 // Example
 import { AuthController } from './app/Controllers';
 
-Container.register(AuthController)
+Container.bind(AuthController)
 ```
 
-### Binding a name (interface) to a class
+### Binding a custom name to a dependency
 
-Because JavaScript does not have interfaces, we provide a `bind` method that allows you to simulate this kind of behavior. Take the example below, whenever Injektion finds a `UserRepository` dependency, it will auto inject `SequelizeUserRepository`. You can now swap implementations with just one line of code:
+Because JavaScript does not have interfaces, we provide a `namedBind` method that allows you to simulate this kind of behavior. Take the example below, whenever Injektion finds a `UserRepository` dependency, it will auto inject `SequelizeUserRepository`. You can now swap implementations with just one line of code:
 
 ```typescript
-Container.bind(name: string, reference: Function): void;
+Container.namedBind(name: string, reference: Function): void;
 
 // Example
 import { SequelizeUserRepository } from './app/Repositories/Implementation';
 
-Container.bind('UserRepository', SequelizeUserRepository)
+Container.namedBind('UserRepository', SequelizeUserRepository)
 ```
 
-### Registering a dependency as a Singleton
+### Binding a dependency as a singleton
 
-The `singleton` method registers a dependency that should only be instantiated one time. Once a singleton is resolved, the same instance will be returned on subsequent calls:
+The `singleton` method binds a dependency that should only be instantiated one time. Once a singleton is resolved, the same instance will be returned on subsequent calls:
 
 ```typescript
 Container.singleton(reference: Function): void;
