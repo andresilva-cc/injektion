@@ -173,7 +173,7 @@ Container.instance(BlogCrawler, crawler);
 You can use the `get` method to get a dependency instance from the container, just pass the dependency name you wish to resolve:
 
 ```typescript
-Container.get<T>(key: string): T;
+Container.get<T>(name: string): T;
 
 // Example
 import { MailFacade } from './app/Facades';
@@ -188,7 +188,7 @@ If you are using TypeScript, you can also provide a type argument to light up In
 Last but not least, you can also check if a given dependency exists in the container by providing its name:
 
 ```typescript
-Container.has(key: string): boolean;
+Container.has(name: string): boolean;
 
 // Example
 const exists = Container.has('ActivationService');
