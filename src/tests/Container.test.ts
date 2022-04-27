@@ -14,7 +14,7 @@ describe('Container', () => {
     userController = <UserController>Container.get('UserController');
   });
 
-  it('should contain the registered dependencies', () => {
+  it('should contain the binded dependencies', () => {
     expect(Container.has('UserController')).toBe(true);
     expect(Container.has('UserService')).toBe(true);
     expect(Container.has('UserRepository')).toBe(true);
@@ -49,7 +49,7 @@ describe('Container', () => {
     }, 5);
   });
 
-  test('register instance', () => {
+  it('should return the same instance when binding a given instance', () => {
     const instance = new User('Slash');
 
     Container.instance(User, instance);
