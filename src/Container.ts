@@ -116,26 +116,26 @@ class Container {
    * Get a dependency from the container and recursively resolve its dependencies
    *
    * @template T Type of the dependency
-   * @param {string} key Key of the dependency
+   * @param {string} name Name of the dependency
    * @returns {T} Resolved dependency
    * @memberof Container
    */
-  public static get<T>(key: string): T {
-    const normalizedKey = Container.normalize(key);
+  public static get<T>(name: string): T {
+    const normalizedName = Container.normalize(name);
 
-    if (!this.has(normalizedKey)) {
-      throw new Error(`Couldn't find dependency ${normalizedKey} in the container`);
+    if (!this.has(normalizedName)) {
+      throw new Error(`Couldn't find dependency ${normalizedName} in the container`);
     }
 
-    if (!this.isDependencyResolved(normalizedKey)) {
-      this.resolve(normalizedKey);
+    if (!this.isDependencyResolved(normalizedName)) {
+      this.resolve(normalizedName);
     }
 
-    if (this.dependencies[normalizedKey].type === DependencyType.Normal) {
-      return this.dependencies[normalizedKey].instructions?.call(this);
+    if (this.dependencies[normalizedName].type === DependencyType.Normal) {
+      return this.dependencies[normalizedName].instructions?.call(this);
     }
 
-    return this.dependencies[normalizedKey].instance;
+    return this.dependencies[normalizedName].instance;
   }
 
   /**
@@ -143,40 +143,42 @@ class Container {
    *
    * @private
    * @static
-   * @param {string} key Key of the dependency
+   * @param {string} name Name of the dependency
    * @memberof Container
    */
-  private static resolve(key: string): void {
-    const { classConstructor } = new ReflectionClass(this.dependencies[key].reference);
+  private static resolve(name: string): void {
+    const { classConstructor } = new ReflectionClass(this.dependencies[name].reference);
 
     const resolvedDependencies: Array<any> = [];
 
     for (let i = 0; i < classConstructor.parameters.length; i += 1) {
-      const { name } = classConstructor.parameters[i];
-      const normalizedName = Container.normalize(name);
+      const { name: parameterName } = classConstructor.parameters[i];
+      const normalizedParameterName = Container.normalize(parameterName);
 
-      if (!this.isDependencyResolved(normalizedName)) {
-        this.resolve(normalizedName);
+      if (!this.isDependencyResolved(normalizedParameterName)) {
+        this.resolve(normalizedParameterName);
       }
 
-      resolvedDependencies.push(normalizedName);
+      resolvedDependencies.push(normalizedParameterName);
     }
 
-    this.dependencies[key].instructions = () => (
-      new this.dependencies[key].reference(...resolvedDependencies.map((dependencyKey: string) => {
-        if (this.dependencies[dependencyKey].type === DependencyType.Normal) {
-          return this.dependencies[dependencyKey].instructions?.call(this);
-        }
+    this.dependencies[name].instructions = () => (
+      new this.dependencies[name].reference(
+        ...resolvedDependencies.map((dependencyName: string) => {
+          if (this.dependencies[dependencyName].type === DependencyType.Normal) {
+            return this.dependencies[dependencyName].instructions?.call(this);
+          }
 
-        return this.dependencies[dependencyKey].instance;
-      }))
+          return this.dependencies[dependencyName].instance;
+        }),
+      )
     );
 
-    if (this.dependencies[key].type === DependencyType.Singleton) {
-      this.dependencies[key].instance = this.dependencies[key].instructions?.call(this);
+    if (this.dependencies[name].type === DependencyType.Singleton) {
+      this.dependencies[name].instance = this.dependencies[name].instructions?.call(this);
     }
 
-    this.dependencies[key].resolved = true;
+    this.dependencies[name].resolved = true;
   }
 
   /**
@@ -195,14 +197,14 @@ class Container {
   /**
    * Check if a dependency exists in the container
    *
-   * @param {string} key Key of the dependency
+   * @param {string} name Name of the dependency
    * @returns {boolean} True if the dependency exists, false if not
    * @memberof Container
    */
-  public static has(key: string): boolean {
-    const normalizedKey = Container.normalize(key);
+  public static has(name: string): boolean {
+    const normalizedName = Container.normalize(name);
 
-    return !!this.dependencies[normalizedKey];
+    return !!this.dependencies[normalizedName];
   }
 
   /**
@@ -210,16 +212,16 @@ class Container {
    *
    * @private
    * @static
-   * @param {string} key Key of the dependency
+   * @param {string} name Name of the dependency
    * @returns {boolean} True if the dependency is resolved, false if not
    * @memberof Container
    */
-  private static isDependencyResolved(key: string): boolean {
-    if (!this.has(key)) {
-      throw new Error(`Couldn't find dependency ${key} in the container`);
+  private static isDependencyResolved(name: string): boolean {
+    if (!this.has(name)) {
+      throw new Error(`Couldn't find dependency ${name} in the container`);
     }
 
-    return this.dependencies[key].resolved;
+    return this.dependencies[name].resolved;
   }
 }
 
