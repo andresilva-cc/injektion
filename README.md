@@ -100,7 +100,7 @@ Check the [API](#api) section below for more info.
 
 ### Autoloading dependencies
 
-Most of your dependencies can be autoloaded by Injektion. To do that, just call the `autoload` method from the container passing a base directory. Injektion will recursively scan for dependencies and register them automatically in the container:
+Most of your dependencies can be autoloaded by Injektion. To do that, just call the `autoload` method from the container passing a base directory. Injektion will recursively scan for dependencies and bind them automatically in the container:
 
 ```typescript
 Container.autoload(baseDirectory: string, replace = false): Promise<void>;
