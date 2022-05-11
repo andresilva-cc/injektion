@@ -112,6 +112,14 @@ class Container {
     };
   }
 
+  /**
+   * Bind a dependency with instructions on how to instantiate it
+   *
+   * @static
+   * @param {string} name Name of the dependency
+   * @param {Instructions} instructions Instructions on how to instantiate it
+   * @memberof Container
+   */
   public static instructions(name: string, instructions: Instructions): void {
     const normalizedName = Container.normalize(name);
 
@@ -120,7 +128,6 @@ class Container {
       type: DependencyType.Normal,
       instructions,
       resolved: true,
-
     };
   }
 
