@@ -15,6 +15,7 @@ Decorator-less dependency injection for JavaScript and TypeScript.
   - [Binding a custom name to a dependency](#binding-a-custom-name-to-a-dependency)
   - [Binding a dependency as a singleton](#binding-a-dependency-as-a-singleton)
   - [Binding a dependency to a given instance](#binding-a-dependency-to-a-given-instance)
+  - [Binding a dependency with instructions on how to instantiate it](#binding-a-dependency-with-instructions-on-how-to-instantiate-it)
   - [Getting a dependency from the container and recursively resolving its dependencies](#getting-a-dependency-from-the-container-and-recursively-resolving-its-dependencies)
   - [Checking if a dependency exists in the container](#checking-if-a-dependency-exists-in-the-container)
 - [Development](#development)
@@ -166,6 +167,25 @@ import { BlogCrawler } from './app/BlogCrawler';
 const crawler = new BlogCrawler('https://some.blog/');
 
 Container.instance(BlogCrawler, crawler);
+```
+
+### Binding a dependency with instructions on how to instantiate it
+
+The `instructions` method binds a dependency with manual instructions on how to instantiate it. The method accepts a callback that returns an instance of the class. You can access the Container class through the first parameter of the callback:
+
+```typescript
+Container.instructions(name: string, instructions: Instructions): void;
+
+// Example
+
+import { SpreadsheetParser } from './app/SpreadsheetParser';
+
+Container.instructions('SpreadsheetParser', (container) => (
+  new SpreadsheetParser(
+    container.get('FileReader'),
+    'xlsx',
+  )
+))
 ```
 
 ### Getting a dependency from the container and recursively resolving its dependencies
