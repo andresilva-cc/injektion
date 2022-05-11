@@ -4,7 +4,7 @@ import SingletonTest from './SingletonTest';
 class UserService {
   constructor(
     private userRepository: UserRepository,
-    private singletonTest: SingletonTest,
+    public singletonTest: SingletonTest,
   ) {}
 
   public all() {

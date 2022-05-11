@@ -3,6 +3,7 @@ import bindDependencies from './Mock/Config/dependencies';
 import SingletonTest from './Mock/SingletonTest';
 import User from './Mock/User';
 import UserController from './Mock/UserController';
+import UserService from './Mock/UserService';
 
 describe('Container', () => {
   let userController: UserController;
@@ -56,6 +57,29 @@ describe('Container', () => {
     const userFromContainer = <User>Container.get('User');
 
     expect(userFromContainer.name).toBe('Slash');
+  });
+
+  test('bind with manual instructions', () => {
+    Container.instructions('ManualUserService', (container) => (
+      new UserService(
+        {
+          all: () => (
+            [
+              {
+                id: 0,
+                name: 'Steve Jobs',
+              },
+            ]
+          ),
+        },
+        container.get('SingletonTest'),
+      )
+    ));
+
+    const userService = <UserService>Container.get('ManualUserService');
+
+    expect(userService.all()[0].name).toBe('Steve Jobs');
+    expect(userService.singletonTest.createdAt).toBeDefined();
   });
 
   it('should throw when trying to get an inexistent dependency', () => {

@@ -3,7 +3,7 @@
 import { ReflectionClass } from 'reflection-function';
 import DependencyType from './DependencyType';
 import ClassFinder from './ClassFinder';
-import Dependency from './Dependency';
+import Dependency, { Instructions } from './Dependency';
 
 /**
  *
@@ -112,6 +112,18 @@ class Container {
     };
   }
 
+  public static instructions(name: string, instructions: Instructions): void {
+    const normalizedName = Container.normalize(name);
+
+    this.dependencies[normalizedName] = {
+      reference: Function,
+      type: DependencyType.Normal,
+      instructions,
+      resolved: true,
+
+    };
+  }
+
   /**
    * Get a dependency from the container and recursively resolve its dependencies
    *
@@ -132,7 +144,7 @@ class Container {
     }
 
     if (this.dependencies[normalizedName].type === DependencyType.Normal) {
-      return this.dependencies[normalizedName].instructions?.call(this);
+      return this.dependencies[normalizedName].instructions?.call(this, this);
     }
 
     return this.dependencies[normalizedName].instance;
@@ -166,7 +178,7 @@ class Container {
       new this.dependencies[name].reference(
         ...resolvedDependencies.map((dependencyName: string) => {
           if (this.dependencies[dependencyName].type === DependencyType.Normal) {
-            return this.dependencies[dependencyName].instructions?.call(this);
+            return this.dependencies[dependencyName].instructions?.call(this, this);
           }
 
           return this.dependencies[dependencyName].instance;
@@ -175,7 +187,7 @@ class Container {
     );
 
     if (this.dependencies[name].type === DependencyType.Singleton) {
-      this.dependencies[name].instance = this.dependencies[name].instructions?.call(this);
+      this.dependencies[name].instance = this.dependencies[name].instructions?.call(this, this);
     }
 
     this.dependencies[name].resolved = true;
